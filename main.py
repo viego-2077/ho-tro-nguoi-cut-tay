@@ -65,7 +65,7 @@ class MyClient(discord.Client):
             return
 
        
-        if message.author.id == OWNER_ID and message.content.startswith(PREFIX):
+        if message.content.startswith(PREFIX):
             parts = message.content[len(PREFIX):].split()
             if not parts:
                 return
