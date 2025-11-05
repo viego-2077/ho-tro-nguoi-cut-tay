@@ -78,15 +78,17 @@ IMAGES_FOLDER = os.path.join("images", "tarot")
 VALID_EXTS = [".png", ".jpg", ".jpeg", ".webp"]
 
 def draw_cards(n=1):
+    """List các lá bài được rút"""
     n = max(1, min(n, MAX_DRAW))
-    deck = list(DECK)
+    deck = list(enumerate(DECK))
     random.shuffle(deck)
     picks = []
     for i in range(n):
-        name, up_text, rev_text = deck[i]
+        idx, (name, up_text, rev_text) = deck[i]
         is_upright = random.random() > 0.30
-        picks.append((i, name, is_upright, up_text, rev_text))
+        picks.append((idx, name, is_upright, up_text, rev_text))
     return picks
+
 
 def find_image_for_card(index, name):
     """
