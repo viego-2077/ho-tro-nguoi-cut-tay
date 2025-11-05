@@ -77,7 +77,7 @@ class MyClient(discord.Client):
                 try:
                     await self.COMMANDS[cmd_name].run(message, args)
                 except Exception as e:
-                    await message.channel.send(f"⚠️ Lỗi khi chạy `{cmd_name}`: {e}")
+                    await message.channel.send(f"Error commands`{cmd_name}`: {e}")
                     print(f"error {cmd_name}: {e}")
             else:
                 
@@ -161,4 +161,5 @@ async def _patched_on_message(self, message):
 MyClient.on_message = _patched_on_message
         
 if __name__ == "__main__":
+
     asyncio.run(start_all_bots())
