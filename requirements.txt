@@ -1,2 +1,4 @@
 discord.py-self
 googletrans==4.0.0-rc1
+aiohttp
+brotli
