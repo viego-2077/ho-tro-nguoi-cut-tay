@@ -97,5 +97,68 @@ async def start_all_bots():
         await asyncio.sleep(3600)
 
 
+import json
+import os
+
+AUTO_FILE = "auto_responses.json"
+
+def load_auto_responses():
+    if not os.path.exists(AUTO_FILE):
+        return []
+    try:
+        with open(AUTO_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+_original_on_message = getattr(MyClient, "on_message", None)
+
+async def _patched_on_message(self, message):
+    if _original_on_message is not None:
+        try:
+            await _original_on_message(self, message)
+        except Exception:
+            pass
+
+    try:
+        if message.author.id == self.user.id:
+            return
+    except Exception:
+        return
+
+    try:
+        if isinstance(message.content, str) and message.content.startswith(PREFIX):
+            return
+    except Exception:
+        pass
+
+    responses = load_auto_responses()
+    if not responses:
+        return
+
+    guild_id = str(message.guild.id) if message.guild else None
+    content = (message.content or "").strip().lower()
+
+    for entry in responses:
+        try:
+            if entry.get("guild_id") != guild_id:
+                continue
+            trigger = (entry.get("trigger") or "").strip().lower()
+            resp = entry.get("response") or ""
+            if not trigger:
+                continue
+            if content == trigger:
+                try:
+                    await message.reply(resp)
+                except Exception:
+                    try:
+                        await message.channel.send(resp)
+                    except Exception:
+                        pass
+                break
+        except Exception:
+            continue
+MyClient.on_message = _patched_on_message
+        
 if __name__ == "__main__":
     asyncio.run(start_all_bots())
